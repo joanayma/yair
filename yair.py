@@ -93,8 +93,11 @@ def get_image_manifest():
             auth_header = req_result.headers['WWW-Authenticate'].split(',')
             registry_auth = auth_header[0].replace('Bearer realm=', '').replace('"', '')
             registry_service = auth_header[1].replace('"', '')
-            registry_scope = auth_header[2].replace('"', '')
-            req_url = registry_auth + "?" + registry_service + "&" + registry_scope + "&offline_token"
+            try:
+                registry_scope = auth_header[2].replace('"', '')
+                req_url = registry_auth + "?" + registry_service + "&" + registry_scope + "&offline_token"
+            except IndexError:
+                req_url = registry_auth + "?" + registry_service + "&offline_token"
             req_result = y_req(req_url, "get")
             data = json.loads(req_result.text)
             registry_token = "Bearer " + data['token']
